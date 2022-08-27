@@ -9,28 +9,28 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import psycopg2
 from psycopg2 import extras
 from functools import wraps
+import configparser
 
 load_dotenv()
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger('tracer')
+config = configparser.ConfigParser()
+config.read('queries.ini')
+config.sections()
 
 
 class bulk_insert:
 
-    def __init__(self):
-        pass
-    
-    #principal decorator
     def consuming_data(function):
         try:
             @wraps(function)
-            def wrapper(self, *args, **kwargs):
+            def wrapper(*args, **kwargs):
 
                 # decorator  to insert data in db
-                query3 = ""
-                query4 = ""
                 # unpacking objects from function call
-                df1 = function(self, *args, **kwargs)
+                query3 = config.get('main', 'q3')
+                query4 = config.get('main', 'q4')
+                df1 = function(*args, **kwargs)
                 cols = []
                 # assigning columns to filter from dataframe
                 for items in df1.columns:
@@ -90,14 +90,6 @@ class bulk_insert:
                 psycopg2.extras.execute_batch(cur=cursor_, sql=df8_query, argslist=df8.values)
                 psycopg2.extras.execute_batch(cur=cursor_, sql=df7_query, argslist=df7.values)
                 print("----please wait a moment..cleaning operation on tables....---")
-                path = os.path.abspath("local_queries.json")
-                with open(path, "r") as json_file:
-                    json_queries = json.load(json_file)
-                for key in json_queries.keys():
-                    if "q3" in key:
-                        query3 = json_queries[key]
-                    if "q4" in key:
-                        query4 = json_queries[key]
                 cursor_.execute(query3)
                 cursor_.execute(query4)
                 cursor_.close()
