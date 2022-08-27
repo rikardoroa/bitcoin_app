@@ -1,3 +1,4 @@
+#script by rikardoroa
 import logging.config
 import json
 import sys

@@ -1,3 +1,4 @@
+#script by rikardoroa
 import logging.config
 import sys
 from dotenv import load_dotenv
