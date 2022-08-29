@@ -1,4 +1,4 @@
-#script by rikardoroa
+# script by rikardoroa
 import logging.config
 import sys
 from dotenv import load_dotenv
@@ -12,23 +12,23 @@ load_dotenv()
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger('tracer')
 
-#class instance
+# class instance
 bulk_request = data_extraction()
 average = db_tables()
 
 
-
 class main_app:
 
-    #init variables
+    # init variables
     def __init__(self):
         self.get_data = bulk_request.get_coin_date
         self.get_data_sk_bulk = bulk_request.get_request_data
         self.get_data_bk_bulk = bulk_request.get_requets_bulk_data
-        self.get_average_price = average.average_price
-        self.creating_tables = average.creating_tables()
+        self.get_average_price = average.average_price_per_coin
+        self.creating_database = average.database_creation
+        self.creating_tables = average.tables_creation
 
-    #main menu for every function execution on console
+    # main menu for every function execution on console
     def option(self):
         try:
             while True:
@@ -42,7 +42,7 @@ class main_app:
                     "Press 5 exit:")
                 option = int(option)
                 # validating the option and choices
-                #threading execution
+                # threading execution
                 if isinstance(option, int):
                     if option == 1:
                         thread_one = threading.Thread(target=self.get_data)
@@ -90,9 +90,12 @@ class main_app:
     def run_tables_creation(self):
         try:
             # running tables and databases
-            thread_one = threading.Thread(target=self.creating_tables)
+            thread_one = threading.Thread(target=self.creating_database)
             thread_one.start()
             thread_one.join()
+            thread_two = threading.Thread(target=self.creating_tables)
+            thread_two.start()
+            thread_two.join()
         except (KeyboardInterrupt, EOFError):
             logger.error("CTRL - C pressed exiting the program")
             raise sys.exit("CTRL- C PRESSED!")
