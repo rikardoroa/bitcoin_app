@@ -50,7 +50,6 @@ class db_tables:
             into the database COINS_DETAIL
         """
         try:
-
             self.conn_db2 = psycopg2.connect(database='coins_detail', user=os.getenv('user'), password=os.getenv('pass'),
                                              host=os.getenv('host'), port='5432')
             self.conn_db2.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
